@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {% if allMyNewNotifs %}({{ (allMyNewNotifs|length) }}) {% endif %} cOSE{% endblock %}
+
+
+{% block body %}
+
+<div class="container-fluid min-vh-100" style="background-color : rgba(163, 157, 157, 0.2)">
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-2 fixed-top justify-content-center">
+            <div class="col-2 mr-auto text-white">
+                cOSE
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class=" navbar-nav list-unstyled d-flex flex-lg-row flex-md-column flex-sm-column flex-column m-0">
+                    <li class="nav-item dropdown px-2 text-center" id="notifs-pub">
+                        {% if myFriendsPubNotifs %}
+                            <a class="" data-href="{{ path('remove_pub_notif')}}"  href="#" id="notifsPubDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-pen-fancy text-white"></i><span class="badge badge-danger text-white">{{ myFriendsPubNotifs|length }}</span>
+                            </a>
+                        {% else %}
+                            <a class="" href="#" id="notifsPubDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-pen-fancy text-dark"></i>
+                            </a>
+                        {% endif %}
+                        <div class="dropdown-menu p-2" aria-labelledby="notifsPubDropdown">
+                            {% for myFriendsPubNotif in myFriendsPubNotifs %}
+                                <p class="dd">{{ myFriendsPubNotif.notification.user.username }} a publié {{ myFriendsPubNotif.notification.publication.titre }} le {{ myFriendsPubNotif.notification.date|date("d/m/Y") }} à {{ myFriendsPubNotif.notification.date|date("H \\h i") }}</p>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown px-2 text-center" id="notifs-like">
+                        {% if myLikeNotifs %}
+                            <a class="" href="#"  data-href="{{ path('remove_like_notif')}}" id="notifsLikeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="far fa-thumbs-up text-white"></i><span class="badge badge-danger text-white">{{ myLikeNotifs|length }}</span>
+                            </a>
+                        {% else %}
+                            <a class="" href="#" id="notifsLikeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="far fa-thumbs-up text-dark"></i>
+                            </a>
+                        {% endif %}
+                        <div class="dropdown-menu p-2" aria-labelledby="notifsLikeDropdown">
+                            {% for myLikeNotif in myLikeNotifs %}
+                                <p class="dd">{{ myLikeNotif.notification.user.username }} a liké {{ myLikeNotif.notification.publication.titre }} le {{ myLikeNotif.notification.date|date("d/m/Y") }} à {{ myLikeNotif.notification.date|date("H \\h i") }}</p>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown px-2 text-center" id="notifs-com">
+                        {% if myComNotifs %}
+                            <a class="" href="#" data-href="{{ path('remove_com_notif')}}" id="notifsComDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="far fa-comment-alt text-white"></i><span class="badge badge-danger text-white">{{ myComNotifs|length }}</span>
+                            </a>
+                        {% else %}
+                            <a class="" href="#" id="notifsComDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-comment-alt text-dark"></i>
+                            </a>
+                        {% endif %}
+                        <div class="dropdown-menu p-2" aria-labelledby="notifsComDropdown">
+                            {% for myComNotif in myComNotifs %}
+                                <p class="dd">{{ myComNotif.notification.user.username }} a commenté votre publication {{ myComNotif.notification.publication.titre }} le {{ myComNotif.notification.date|date("d/m/Y") }} à {{ myComNotif.notification.date|date("H \\h i") }}</p>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown px-2 text-center">
+                        <div class="col-lg-auto text-center">
+                            <a class="text-decoration-none text-white menu small" href="#" data-href="{{ path('remove_com_notif')}}" id="notifsComDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Mes amis
+                            </a>
+                            <div class="dropdown-menu p-2" aria-labelledby="notifsComDropdown">
+                            {% for myFriend in myFriends %}
+                                <p class="dd">{{ myFriend.username }}</p>
+                                <div class="dropdown-divider"></div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="col-lg-auto text-center">
+                            <a class="text-decoration-none text-white menu small" href="{{ path('app_logout') }}">Se déconnecter</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    {% endif %}
+                 
+        <div class="container pt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-10 p-3">
+                    <div class="row">
+                        {{ form_start(formPublication, {'attr': {"id": "form-pub", "class":"border rounded p-3 bg bg-white w-100"}}) }}
+                        <h6 id="titre-form">Exprimez-vous {{ app.user.username }}</h6> 
+                        {{ form_widget(formPublication) }}
+                        {{ form_end(formPublication) }}
+                    </div>
+                </div>
+                <div class="col-lg-7 offset-lg-1 col-10 mb-3">
+                    {% for meAndMyFriendsPublication in meAndMyFriendsPublications %}
+                        <div class="row">
+                            <div class="col-12 bloc-pub bg bg-white mt-3 p-3 border rounded">
+                                <div class="row">
+                                    <div class="col mr-auto">
+                                        <h5 class="titre">{{ meAndMyFriendsPublication.titre }}</h5>
+                                    </div>
+                                    {% if meAndMyFriendsPublication.user == app.user %}
+                                        <div class="col-auto">
+                                            <a class="del-pub text-dark" href="{{ path('remove_publication') }}" data-idpub="{{meAndMyFriendsPublication.id}}"><i class="fas fa-trash-alt"></i></a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <p class="mb-4 small sous-titre">Publié par {{ meAndMyFriendsPublication.user.username }} le {{ meAndMyFriendsPublication.date|date("d/m/Y") }} à {{ meAndMyFriendsPublication.date|date("H \\h i") }}</h6>
+                                <p class="mb-4 text-break message">{{ meAndMyFriendsPublication.message }}</p>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row border-bottom mx-auto mb-3">
+                                            <div class="col-auto text-left p-0 mr-auto col-com">
+                                                <p class=""><i class="far fa-comment-alt"></i> {{ meAndMyFriendsPublication.commentaries|length }}</p>
+                                            </div>
+                                            <div class="col-auto text-right p-0 col-like">
+                                                {% if meAndMyFriendsPublication.isLikedByUser(app.user) %}
+                                                    <span class="like-text">Vous avez liké </span>
+                                                    <a class="js-like-display text-dark text-decoration-none" href="{{ path('dislike_publication') }}" data-idpub="{{meAndMyFriendsPublication.id}}">
+                                                        <i class="fas fa-thumbs-up"></i>
+                                                        <span class="compteur" href="{{ path('who_like', {'id' : meAndMyFriendsPublication.id}) }}">{{ meAndMyFriendsPublication.likes|length }}</span>  
+                                                    </a>
+                                                {% else %}
+                                                    <span class="like-text">Liker</span>
+                                                    <a class="js-like-display text-dark text-decoration-none" href="{{ path('like_publication') }}" data-idpub="{{meAndMyFriendsPublication.id}}">    
+                                                        <i class="far fa-thumbs-up"></i>
+                                                        <span class="compteur" href="{{ path('who_like', {'id' : meAndMyFriendsPublication.id}) }}">{{ meAndMyFriendsPublication.likes|length }}</span>  
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-12 border-bottom p-0"> 
+                                            {% for commentary in meAndMyFriendsPublication.commentaries %}
+                                                <p class="text-break comment"><span class="username-comment">{{ commentary.user.username }}</span> {{ commentary.comment }}</p>
+                                            {% endfor %}
+                                        </div>
+                                        <form class="form-com" method="post" action="{{ path('add_commentary', {'id' : meAndMyFriendsPublication.id}) }}">
+                                            <input name="comment" type="textarea" class="form-control form-rounded form-com-input" minlength="1" maxlength="500" placeholder="Votre commentaire..."/>
+                                        </form>
+                                   </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+

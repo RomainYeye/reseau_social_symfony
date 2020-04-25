@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} S'inscrire {% endblock %}
+
+{% block body %}
+<div class="container-fluid bg bg-dark vh-100">
+    <div class="row" style="height:50px">
+    </div>
+    <div class="container bg bg-white p-5 w-50 rounded-sm">
+
+        <h1>Créer un compte</h1>
+        {{ form_start(formUser) }}
+            {{ form_widget(formUser) }}
+        {{ form_end(formUser) }}
+        
+    </div>
+</div>
+
+{% endblock %}

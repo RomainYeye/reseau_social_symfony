@@ -1,0 +1,83 @@
+@font-face {
+    font-family: "RalewayB";
+    src: url(Raleway-Bold.ttf);
+}
+
+@font-face {
+    font-family: "RalewayEB";
+    src: url(Raleway-ExtraBold.ttf);
+}
+
+@font-face {
+    font-family: "Raleway";
+    src: url(Raleway-Medium.ttf);
+}
+
+@font-face{
+    font-family: "ritalic";
+    src: url(Raleway-Italic.ttf)
+}
+
+@font-face{
+    font-family: "RalewayL";
+    src: url(Raleway-Light.ttf)
+}
+
+body {
+    background-color: rgba(222, 249, 252, 0.5);
+    font-family: "Raleway";
+}
+
+.titre {
+    font-size: 1.2em;
+    font-family: "RalewayB";
+}
+
+#titre-form {
+    font-size: 1em;
+    font-family: "RalewayB";
+}
+
+.sous-titre {
+    font-family: "ritalic";
+    font-size: 0.7em;
+}
+
+.message {
+    font-size: 0.9em;
+}
+
+.comment {
+    color: black;
+    font-size: 11px;
+}
+
+.username-comment {
+    font-size: 12px;
+    color: rgb(68, 85, 199);
+    font-family: "RalewayEB";
+    
+}
+
+#form-pub {
+    border : rgb(162, 174, 187) solid 4px;
+}
+
+.bloc-pub {
+    border: rgb(162, 174, 187) solid 4px;
+    box-shadow: 10px gray;
+
+}
+
+.col-com {
+    font-size: 0.7em;
+}
+
+.col-like {
+    font-size: 0.7em;
+}
+
+.dd {
+    font-size: 0.7em;
+}
+
