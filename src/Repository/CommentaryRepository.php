@@ -51,14 +51,14 @@ class CommentaryRepository extends ServiceEntityRepository
 
     public function findCommentariesOfPublications(array $publications) : ?array
     {
-    $entityManager = $this->getEntityManager();
+        $entityManager = $this->getEntityManager();
 
-    $query = $entityManager->createQuery(
-        'SELECT c
-        FROM App\Entity\Commentary c
-        WHERE c.publication IN (:publications)'
-    )->setParameter('publications', $publications, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY);
+        $query = $entityManager->createQuery(
+            'SELECT c
+            FROM App\Entity\Commentary c
+            WHERE c.publication IN (:publications)'
+        )->setParameter('publications', $publications, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY);
 
-    return $query->getResult();
+        return $query->getResult();
     }
 }

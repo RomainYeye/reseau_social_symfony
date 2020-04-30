@@ -66,6 +66,6 @@ class NotifyToRepository extends ServiceEntityRepository
         )->setParameters(array('user' => $user, 'flag' => $flag, 'typeofnot' => $type));
     
         return $query->getResult();
-        }
+    }
     
 }
