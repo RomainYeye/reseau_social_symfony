@@ -13,6 +13,7 @@ use App\Repository\PublicationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\Traits\createNewNotificationTrait;
 use App\Controller\Traits\createNewNotifyToTrait;
@@ -42,7 +43,13 @@ class HomePageController extends AbstractController
     public function displayHomePage(Request $request)
     {
         $user = $this->getUser();
-        
+        dump($request);
+        $isAjax = $request->isXmlHttpRequest();
+        dump($isAjax);
+        $isAjax ? $isAjax = "true" : $isAjax = "false";
+        if($isAjax != "false") {
+            return new Response($isAjax);
+        }
         $myLikeNotifs = $this->notifyToRepo->searchUserNotifsOfType($user, "like", 0);
         $myComNotifs = $this->notifyToRepo->searchUserNotifsOfType($user, "commentaire", 0);
         $myFriendsPubNotifs = $this->notifyToRepo->searchUserNotifsOfType($user, "publication", 0);
@@ -63,26 +70,59 @@ class HomePageController extends AbstractController
             array_push($myFriends, $friendship->getFriend());
         }
 
+        $arrayOfPubsForms = [];
+        $myPubsToForms = dump($user->getPublications()->toArray());
+
+        for ($i = 0; $i < count($myPubsToForms); $i++) {
+            $forms[] = $this->container
+                ->get('form.factory')
+                ->createNamedBuilder('form_'.$i, PublicationType::class, $myPubsToForms[$i])
+                ->getForm();
+            $forms[$i]->handleRequest($request);
+
+            if ($forms[$i]->isSubmitted() && $forms[$i]->isValid()) {
+                dump('hello');
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                return $this->redirectToRoute('home_page');
+            }
+        }
+
+        // foreach($myPubsToForms as $publication ) {
+        //     array_push($arrayOfPubsForms, $form[$publication->getId()] = $this->createForm(PublicationType::class, $publication));
+        // }
+
+        $arrayOfPubsForms2 = [];
+        foreach($forms as $form) {
+            // $form->handleRequest($request);
+            // if($form->isSubmitted() && $form->isValid()) {
+            //     dump('hello');
+            //     $manager=$this->getDoctrine()->getManager();
+            //     $manager->flush();
+            // }
+            array_push($arrayOfPubsForms2, $form->createView());
+        }
+
         $publication = new Publication();
         $form = $this->createForm(PublicationType::class, $publication);    
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            return new Response('hello');
+            // $manager=$this->getDoctrine()->getManager();
 
-            $manager=$this->getDoctrine()->getManager();
+            // $notification = $this->createNewNotification($user, $publication, "publication");
+            // $manager->persist($notification);
 
-            $notification = $this->createNewNotification($user, $publication, "publication");
-            $manager->persist($notification);
+            // foreach($myFriends as $friend) {
+            //     $notifyTo = $this->sendNewNotifyToCaseNewPublication($friend, $notification);
+            //     $manager->persist($notifyTo);
+            // }
 
-            foreach($myFriends as $friend) {
-                $notifyTo = $this->sendNewNotifyToCaseNewPublication($friend, $notification);
-                $manager->persist($notifyTo);
-            }
-
-            $publication->setDate(new DateTime());
-            $publication->setUser($user);
-            $manager->persist($publication);
-            $manager->flush();
-            return $this->redirectToRoute('home_page');
+            // $publication->setDate(new DateTime());
+            // $publication->setUser($user);
+            // $manager->persist($publication);
+            // $manager->flush();
+            // return $this->redirectToRoute('home_page');
         }
 
         return $this->render('home_page/index.html.twig', [
@@ -94,6 +134,7 @@ class HomePageController extends AbstractController
             'myLikeNotifs' => $myLikeNotifs,
             'myComNotifs' => $myComNotifs,
             'myFriendsPubNotifs' => $myFriendsPubNotifs,
+            'arrayOfPubsForms' => $arrayOfPubsForms2
         ]);
     }
 

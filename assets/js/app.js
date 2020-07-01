@@ -141,6 +141,23 @@ $(".del-pub").each(function(index, element) {
     })
 })
 
+$('#form-pub').submit(function(e) {
+    e.preventDefault();
+    let url = $(this).parent().data('href');
+    let data = $(this).serialize();
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: data,
+        success: function(response) {
+            console.log(response)
+        }, 
+        error: function(xhr, message, status) {
+            console.log(message);
+        }
+    })
+})
+
 // fonctions
 function createNewCommentDisplay(response) {
     let p = $("<p>").attr({class: "small text-break"});
